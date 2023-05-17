@@ -22,33 +22,12 @@ class Dataset(object):
     def get_key(self, img_idx):
         raise NotImplementedError()
 
-    # def get_filename(self, img_idx, root=None):
-    #     if root is None:
-    #         root = 'C:\\path\\to\\data\\aachen'
-    #     print('key', self.get_key(img_idx))
-    #     return os.path.join(root or self.root, self.img_dir, self.get_key(img_idx))
-
-    # def get_image(self, img_idx, root=None):
-    #     from PIL import Image
-    #     fname = self.get_filename(img_idx, root=root)
-    #     print('filename', fname)
-    #     try:
-    #         return Image.open(fname).convert('RGB')
-    #     except Exception as e:
-    #         raise IOError("Could not load image %s (reason: %s)" % (fname, str(e)))
-
     def get_filename(self, img_idx, root=None):
-        # print('key', self.get_key(img_idx))
-        # print('root', root)
-        # print('self_root', self.root)
-        # print('img_dir', self.img_dir)
-        # print('get_key_idx', self.get_key(img_idx))
         return os.path.join(root or self.root, self.img_dir, self.get_key(img_idx))
 
     def get_image(self, img_idx):
         from PIL import Image
         fname = self.get_filename(img_idx)
-        # print('filename', fname)
         try:
             return Image.open(fname).convert('RGB')
         except Exception as e:
