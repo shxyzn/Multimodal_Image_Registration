@@ -475,7 +475,7 @@ class ColorJitter (StillTransform):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser("Script to try out and visualize transformations")
-    parser.add_argument('--img', type=str, default='imgs/test.png', help='input image')
+    parser.add_argument('--img', type=str, default='imgs\\test.png', help='input image')
     parser.add_argument('--trfs', type=str, required=True, help='list of transformations')
     parser.add_argument('--layout', type=int, nargs=2, default=(3,3), help='nb of rows,cols')
     args = parser.parse_args()
