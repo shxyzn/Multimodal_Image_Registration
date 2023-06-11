@@ -1,7 +1,8 @@
 # Copyright 2019-present NAVER Corp.
 # CC BY-NC-SA 3.0
 # Available only for non-commercial use
-#python train.py --save-path /path/to/model_lite_0517.pt --gpu -1
+#python train.py --save-path /path/to/test_0611.pt --pretrained /path/to/test.pt --gpu -1
+#python train.py --save-path /path/to/test_0611.pt --gpu -1
 
 import os, pdb
 import torch
@@ -15,7 +16,6 @@ from nets.losses import *
 import warnings
 warnings.filterwarnings("ignore")
 
-
 default_net = "Quad_L2Net_ConfCFS()"
 
 toy_db_debug = """SyntheticPairDataset(
@@ -23,10 +23,10 @@ toy_db_debug = """SyntheticPairDataset(
             'RandomScale(256,1024,can_upscale=True)', 
             'RandomTilting(0.5), PixelNoise(25)')"""
 
-# db_web_images = """SyntheticPairDataset(
-#     web_images, 
-#         'RandomScale(256,1024,can_upscale=True)',
-#         'RandomTilting(0.5), PixelNoise(25)')"""
+db_web_images = """SyntheticPairDataset(
+    web_images, 
+        'RandomScale(256,1024,can_upscale=True)',
+        'RandomTilting(0.5), PixelNoise(25)')"""
 
 db_aachen_images = """SyntheticPairDataset(
     aachen_db_images, 
@@ -37,21 +37,14 @@ db_aachen_style_transfer = """TransformedPairs(
     aachen_style_transfer_pairs,
             'RandomScale(256,1024,can_upscale=True), RandomTilting(0.5), PixelNoise(25)')"""
 
-db_aachen_flow = "aachen_flow_pairs"
-
-db_test_images = """SyntheticPairDataset(
-    db_test_images, 
-        'RandomScale(256,1024,can_upscale=True)', 
-        'RandomTilting(0.5), PixelNoise(25)')"""
-
+# db_aachen_flow = "aachen_flow_pairs"
 
 data_sources = dict(
     D = toy_db_debug,
-    # W = db_web_images,
+    W = db_web_images,
     A = db_aachen_images,
-    F = db_aachen_flow,
+    # F = db_aachen_flow,
     S = db_aachen_style_transfer,
-    T = db_test_images,
     )
 
 default_dataloader = """PairLoader(CatPairDataset(`data`),
@@ -80,26 +73,23 @@ class MyTrainer(trainer.Trainer):
         return loss, details
 
 
-
 if __name__ == '__main__':
-    import argparse #명령행 인자를 파싱하기 위해서 argparse 모듈 임포트
-    parser = argparse.ArgumentParser("Train R2D2") #인자를 받기위한 인스턴스 생성
+    import argparse
+    parser = argparse.ArgumentParser("Train R2D2")
 
     parser.add_argument("--data-loader", type=str, default=default_dataloader)
-    parser.add_argument("--train-data", type=str, default=list('T'), nargs='+', 
+    parser.add_argument("--train-data", type=str, default=list('WAS'), nargs='+', 
         choices = set(data_sources.keys()))
-    # parser.add_argument("--train-data", type=str, default=list('WASF'), nargs='+', 
-    #     choices = set(data_sources.keys()))
     parser.add_argument("--net", type=str, default=default_net, help='network architecture')
 
-    parser.add_argument("--pretrained", type=str, default="", help='pretrained model path')
+    parser.add_argument("--pretrained", type=str, default="/path/to/test.pt", help='pretrained model path')
     parser.add_argument("--save-path", type=str, required=True, help='model save_path path')
     
     parser.add_argument("--loss", type=str, default=default_loss, help="loss function")
     parser.add_argument("--sampler", type=str, default=default_sampler, help="AP sampler")
     parser.add_argument("--N", type=int, default=16, help="patch size for repeatability")
 
-    parser.add_argument("--epochs", type=int, default=3, help='number of training epochs')
+    parser.add_argument("--epochs", type=int, default=25, help='number of training epochs')
     parser.add_argument("--batch-size", "--bs", type=int, default=8, help="batch size")
     parser.add_argument("--learning-rate", "--lr", type=str, default=1e-4)
     parser.add_argument("--weight-decay", "--wd", type=float, default=5e-4)
@@ -111,6 +101,7 @@ if __name__ == '__main__':
     
     iscuda = common.torch_set_gpu(args.gpu)
     common.mkdir_for(args.save_path)
+
 
     # Create data loader
     from datasets import *
