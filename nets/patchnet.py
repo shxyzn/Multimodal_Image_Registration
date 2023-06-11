@@ -6,6 +6,7 @@ import pdb
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import io
 
 
 class BaseNet (nn.Module):
@@ -127,6 +128,14 @@ class Quad_L2Net_ConfCFS (Quad_L2Net):
         # repeatability classifier: for some reasons it's a softplus, not a softmax!
         # Why? I guess it's a mistake that was left unnoticed in the code for a long time...
         self.sal = nn.Conv2d(self.out_dim, 1, kernel_size=1) 
+
+
+    def load_pretrained(self, pretrained_path):
+        buffer = io.BytesIO()
+        torch.save(self.state_dict(), buffer)
+        buffer.seek(0)
+        loaded_dict = torch.load(buffer, map_location='cpu')
+        self.load_state_dict(loaded_dict)
 
     def forward_one(self, x):
         assert self.ops, "You need to add convolutions first"
