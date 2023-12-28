@@ -1,9 +1,9 @@
-# ajou23-1_r2d2
+# MIR(Multi-modal Image Registration)
 
-<2023. 05. 17>
+<2023. 12. 28>
 
-test dataset을 위해 다음 파일들을 추가로 수정했습니다.
+This codes are for fine-tuning model training.
 
-`dataset/__init__.py`
-`dataset/aachen.py`
-`train.py`
+all of the researches are done from now.
+
+I will update codes which the paper i wrote at IPIU 2024.
